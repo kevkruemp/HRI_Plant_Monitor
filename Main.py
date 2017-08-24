@@ -2,7 +2,7 @@ import re
 import time
 import datetime
 import json
-import keysafe.py
+import keysafe
 import RPi.GPIO as GPIO
 from slackclient import SlackClient
 from pytz import timezone
