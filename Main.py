@@ -30,7 +30,7 @@ GPIO.setup(moisturePin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # Name of the slack bot
 botname = "alexabot"
 # slack client ID for the testbot
-slack_client = SlackClient("xoxb-230232365618-N2Ce1y2U47xi0pnHZXm8iBjF")
+slack_client = SlackClient("xoxb-232038802647-RtQvNIfhhrfL5TMYM0eUKoz9")
 
 ''' Interactions:
 	Alexa, what is your water level?
