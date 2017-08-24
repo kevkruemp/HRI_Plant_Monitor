@@ -5,7 +5,10 @@ import json
 import keysafe
 import RPi.GPIO as GPIO
 from slackclient import SlackClient
+<<<<<<< HEAD
 from Adafruit_IO import Client as AdafruitClient
+=======
+>>>>>>> dd34281a7b4d17fabbdecf73ae38f0356798ca3e
 from pytz import timezone
 ''' This is the main controller of the plant monitor and contains the monitoring loop
 
@@ -38,7 +41,10 @@ lastWatered = []
 botname = "alexabot"
 # slack client ID for the testbot
 slack_client = SlackClient(keysafe.getSlackID())
+<<<<<<< HEAD
 adafruit_client = AdafruitClient(keysafe.getAdafruitID())
+=======
+>>>>>>> dd34281a7b4d17fabbdecf73ae38f0356798ca3e
 
 ''' Interactions:
 	Alexa, what is your water level?
@@ -74,6 +80,7 @@ def waterPlants(waterTime):
 def etcnow():
     return str(datetime.datetime.now(timezone('EST')))
 
+<<<<<<< HEAD
 def checkIO():
 	print adafruit_client.receive('HRC2')
 	if (adafruit_client.receive('HRC2').value == 'Pump'):
@@ -82,6 +89,8 @@ def checkIO():
 	threading.Timer(1, checkIO).start()
 
 checkIO()
+=======
+>>>>>>> dd34281a7b4d17fabbdecf73ae38f0356798ca3e
 while True:
 	for message in slack_client.rtm_read():
 		# If a slack message is detected, see if it starts with a testbot callout
