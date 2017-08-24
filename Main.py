@@ -35,7 +35,7 @@ lastWatered = []
 # Name of the slack bot
 botname = "alexabot"
 # slack client ID for the testbot
-slack_client = SlackClient("xoxb-232038802647-RtQvNIfhhrfL5TMYM0eUKoz9")
+slack_client = SlackClient("xoxb-232038802647-91xkWJ0ExDQca1ptbUwVDFno")
 
 ''' Interactions:
 	Alexa, what is your water level?
