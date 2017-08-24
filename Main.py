@@ -1,8 +1,10 @@
 import re
 import time
+import datetime
 import json
 import RPi.GPIO as GPIO
 from slackclient import SlackClient
+from pytz import timezone
 ''' This is the main controller of the plant monitor and contains the monitoring loop
 
 '''
@@ -27,6 +29,9 @@ GPIO.setup(valve5Pin, GPIO.OUT)
 GPIO.setup(valve6Pin, GPIO.OUT)
 GPIO.setup(moisturePin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+ValveList = [valve1Pin, valve2Pin, valve3Pin, valve4Pin, valve5Pin, valve6Pin]
+lastWatered = []
+
 # Name of the slack bot
 botname = "alexabot"
 # slack client ID for the testbot
@@ -48,13 +53,23 @@ slack_client = SlackClient("xoxb-232038802647-RtQvNIfhhrfL5TMYM0eUKoz9")
 # find the user ID of the testbot
 user_list = slack_client.api_call("users.list")
 for user in user_list.get('members'):
-	if user.get('name') == "testbot":
+	if user.get('name') == botname:
 		slack_user_id = user.get('id')
 		break
+	    
 # connect the slack bot to slack
 if slack_client.rtm_connect():
 	print "connected!"
-
+	
+def waterPlants(waterTime):
+    
+    for valve in ValveList:
+        GPIO.output((pumpPin,valve), 1)
+        time.sleep(waterTime)
+        GPIO.output((pumpPin,valve), 0)
+    
+def etcnow():
+    return str(datetime.datetime.now(timezone('EST')))
 
 while True:
 	for message in slack_client.rtm_read():
@@ -65,13 +80,17 @@ while True:
 			message_text = message['text'].\
 				split("<@%s" % slack_user_id)[1].\
 				strip()
-			# remove the testbot name form the message so it can be read
+			# remove the botname form the message so it can be read
 				
 			# match the message content to key phrases to determine actions to be taken
-			if re.match(r'.*(makerbot).*', message_text, re.IGNORECASE):
-				slack_client.api_call("chat.postMessage", channel=message['channel'],
-					text="It is always broken.",
-					as_user=True)
-
+			if re.match(r'.*(plants).*', message_text, re.IGNORECASE):
+                            waterPlants(1)
+			    slack_client.api_call("chat.postMessage", channel=message['channel'],
+				    text="The plants have been watered", as_user=True)
+			    lastWatered = etcnow()
+                        
+                        if re.match(r'.*(last water).*', message_text, re.IGNORECASE):
+                            slack_client.api_call("chat.postMessage", channel=message['channel'],
+                                    text=lastWatered, as_user=True)
 	
 	time.sleep(1)
