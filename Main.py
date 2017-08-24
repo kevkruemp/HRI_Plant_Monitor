@@ -2,6 +2,7 @@ import re
 import time
 import datetime
 import json
+import keysafe.py
 import RPi.GPIO as GPIO
 from slackclient import SlackClient
 from pytz import timezone
@@ -35,7 +36,7 @@ lastWatered = []
 # Name of the slack bot
 botname = "alexabot"
 # slack client ID for the testbot
-slack_client = SlackClient("xoxb-232038802647-91xkWJ0ExDQca1ptbUwVDFno")
+slack_client = SlackClient(keysafe.getSlackID())
 
 ''' Interactions:
 	Alexa, what is your water level?
