@@ -1,14 +1,31 @@
 import re
 import time
 import json
+import RPi.GPIO as GPIO
 from slackclient import SlackClient
 ''' This is the main controller of the plant monitor and contains the monitoring loop
 
-GPIO pins:
-
-
-
 '''
+
+# GPIO Pin setup
+pumpPin = 11
+valve1Pin = 12
+valve2Pin = 13
+valve3Pin = 15
+valve4Pin = 16
+valve5Pin = 18
+valve6Pin = 22
+moisturePin = 19
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(pumpPin, GPIO.OUT)
+GPIO.setup(valve1Pin, GPIO.OUT)
+GPIO.setup(valve2Pin, GPIO.OUT)
+GPIO.setup(valve3Pin, GPIO.OUT)
+GPIO.setup(valve4Pin, GPIO.OUT)
+GPIO.setup(valve5Pin, GPIO.OUT)
+GPIO.setup(valve6Pin, GPIO.OUT)
+GPIO.setup(moisturePin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Name of the slack bot
 botname = "alexabot"
