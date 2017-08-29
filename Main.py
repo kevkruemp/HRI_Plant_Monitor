@@ -73,7 +73,7 @@ def waterPlants(waterTime):
         GPIO.output((pumpPin,valve), 0)
 
 def sendMessage():
-	slack_client.api_call("chat.postMessage", channel=message['channel'],
+	slack_client.api_call("chat.postMessage", channel='planter',
 	    text="Testing", as_user=True)
     
 def etcnow():
