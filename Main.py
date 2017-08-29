@@ -102,7 +102,7 @@ def checkSlack():
                         if re.match(r'.*(last water).*', message_text, re.IGNORECASE):
                             slack_client.api_call("chat.postMessage", channel=message['channel'],
                                     text=lastWatered, as_user=True)
-    threading.Timer(2, checkSlack).start()
+        threading.Timer(2, checkSlack).start()
 	
 
 # check Adafruit IO
@@ -113,12 +113,13 @@ def checkIO():
 
 	# match cases
 	if (io_value == 'Pump'):
-		waterPlants(1)
+                waterPlants(1)
 	elif (io_value == 'Message'):
-		sendMessage()
+                sendMessage()
 	adafruit_client.send('HRC2', 'null')
-	threading.Timer(2, checkIO).start()
+        threading.Timer(2, checkIO).start()
 
+        
 # start the checking functions
 checkSlack()
 time.sleep(1)
