@@ -114,7 +114,7 @@ def checkIO():
 	# match cases
 	if (io_value == 'Pump'):
 		waterPlants(1)
-	elif (io_value == 'Read'):
+	elif (io_value == 'Message'):
 		sendMessage()
 	adafruit_client.send('HRC2', 'null')
 	threading.Timer(2, checkIO).start()
