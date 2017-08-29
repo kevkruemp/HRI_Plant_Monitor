@@ -71,19 +71,60 @@ def waterPlants(waterTime):
         GPIO.output((pumpPin,valve), 1)
         time.sleep(waterTime)
         GPIO.output((pumpPin,valve), 0)
+
+def sendMessage():
+	slack_client.api_call("chat.postMessage", channel=message['channel'],
+	    text="Testing", as_user=True)
     
 def etcnow():
     return str(datetime.datetime.now(timezone('EST')))
 
+# check Slack
+def checkSlack():
+	# look through all messages
+	for message in slack_client.rtm_read():
+		# If a slack message is detected, see if it starts with a testbot callout
+		if 'text' in message and message['text'].startswith("<@%s" % slack_user_id):
+			print "message received: %s" % json.dumps(message, indent=2)
+
+			message_text = message['text'].\
+				split("<@%s" % slack_user_id)[1].\
+				strip()
+			# remove the botname from the message so it can be read
+			
+			# match the message content to key phrases to determine actions to be taken
+			if re.match(r'.*(plants).*', message_text, re.IGNORECASE):
+                            waterPlants(1)
+			    slack_client.api_call("chat.postMessage", channel=message['channel'],
+				    text="The plants have been watered", as_user=True)
+			    lastWatered = etcnow()
+                        
+                        if re.match(r'.*(last water).*', message_text, re.IGNORECASE):
+                            slack_client.api_call("chat.postMessage", channel=message['channel'],
+                                    text=lastWatered, as_user=True)
+    threading.Timer(2, checkSlack).start()
+	
+
+# check Adafruit IO
 def checkIO():
+	# look at the HRC2 feed
 	print adafruit_client.receive('HRC2')
-	if (adafruit_client.receive('HRC2').value == 'Pump'):
-		adafruit_client.send('HRC2', 'null')
+	io_value = adafruit_client.receive('HRC2').value
+
+	# match cases
+	if (io_value == 'Pump'):
 		waterPlants(1)
+	elif (io_value == 'Read'):
+		sendMessage()
+	adafruit_client.send('HRC2', 'null')
 	threading.Timer(2, checkIO).start()
 
+# start the checking functions
+checkSlack()
+time.sleep(1)
 checkIO()
 
+'''
 while True:
 	for message in slack_client.rtm_read():
 		# If a slack message is detected, see if it starts with a testbot callout
@@ -107,3 +148,4 @@ while True:
                                     text=lastWatered, as_user=True)
 	
 	time.sleep(1)
+'''
