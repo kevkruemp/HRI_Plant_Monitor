@@ -7,10 +7,10 @@ port = 8000
 
 class funHandler(BaseHTTPRequestHandler):
     # def do_GET(self, function, *args, **kwargs):
-    def do_GET(self, function):
+    def do_GET(self):
         print self.path
-        function()
         self.send_response(200)
+        return self.path
 
 # httpd = SocketServer.TCPServer(("", port), MyHandler)
 # httpd.serve_forever()
