@@ -39,8 +39,9 @@ class funHandler(BaseHTTPRequestHandler):
         move_blinds(self.path[1:])
 
 def fb_thread():
-    if (GPIO.input(gpio_in)):
-        blinds_state = fb_check()
+    while(1):
+        if (GPIO.input(gpio_in)):
+            blinds_state = fb_check()
 
 def fb_put(state):
     fb.put('blinds','state',state)
