@@ -54,7 +54,12 @@ def fb_check():
     move_blinds(blinds_cmd)
 
     # command blossom
-    urllib2.urlopen(blossom_add+blossom_s+'/'+blossom_idle)
+    blossom_cmd = blossom_add+blossom_s+'/'+blossom_idle
+    urllib2.urlopen(blossom_cmd)
+    print blossom_cmd
+
+    # erase blinds_cmd
+    fb.put('blinds','cmd','')
 
     return blinds_state
 
