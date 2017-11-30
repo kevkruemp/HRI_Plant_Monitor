@@ -15,7 +15,7 @@ GPIO.setup(gpio_in,GPIO.IN)
 from firebase import firebase
 fb = firebase.FirebaseApplication('https://gal-9000.firebaseio.com/', None)
 
-blossom_add = '10.148.9.99:5555/s/'
+blossom_add = 'http://10.148.9.99:5555/s/'
 blinds_state = ''
 
 # sending http requests
