@@ -1,0 +1,8 @@
+{
+  "name": "particle-weather-station-alexa",
+  "version": "0.1.0",
+  "dependencies": {
+    "alexa-sdk": "^1.0.21",
+    "particle-api-js": "^6.6.2"
+  }
+}
