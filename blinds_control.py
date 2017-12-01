@@ -57,8 +57,11 @@ def fb_check():
 
     # command blossom
     blossom_cmd = blossom_add+blossom_s+'/'+blossom_idle
-    urllib2.urlopen(blossom_cmd)
-    print blossom_cmd
+    try:
+        urllib2.urlopen(blossom_cmd)
+        print blossom_cmd
+    except:
+        pass
 
     # erase commands
     fb.put('blinds','cmd','')
@@ -87,6 +90,8 @@ def move_blinds(state):
         # fb_put('down')
     elif (state == 'stop'):
         motor_move(0)
+    else:
+        return
     fb.put('blinds','state',state)
 
 # main
