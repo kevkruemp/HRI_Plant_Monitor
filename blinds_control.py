@@ -6,10 +6,12 @@ import motor_control as motorCtrl
 
 # GPIO setup
 import RPi.GPIO as GPIO
-# use gpio pin 4 (pin 7)
-gpio_in = 4
+# GPIO 4 (pin 7) goes up
+gpio_up = 4
+# GPIO 3 (pin 5) goes down
+gpio_down = 3
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(gpio_in,GPIO.IN)
+GPIO.setup(gpio_up,GPIO.IN)
 
 # firebase
 from firebase import firebase
@@ -41,8 +43,10 @@ class funHandler(BaseHTTPRequestHandler):
 # firebase functions
 def fb_thread():
     while(1):
-        if (GPIO.input(gpio_in)):
-            blinds_state = fb_check()
+        if (GPIO.input(gpio_up)):
+            move_blinds('up')
+        elif (GPIO.input(gpio_down)):
+            move_blinds('down')
 
 def fb_put(state):
     fb.put('blinds','state',state)
@@ -53,16 +57,16 @@ def fb_check():
     blossom_s = fb.get('blossom','s')
     blossom_idle = fb.get('blossom','idle')
 
-    move_blinds(blinds_cmd)
-
     # command blossom
     blossom_cmd = blossom_add+blossom_s+'/'+blossom_idle
+    print blossom_cmd
     try:
         urllib2.urlopen(blossom_cmd)
-        print blossom_cmd
     except:
         pass
 
+    # move blinds
+    move_blinds(blinds_cmd)
     # erase commands
     fb.put('blinds','cmd','')
 
