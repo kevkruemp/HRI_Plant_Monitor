@@ -106,7 +106,7 @@ def move_blinds(state):
     else:
         return
     fb.put('blinds','state',state)
-    cmd_blossom(blossom_blinds[state])
+    cmd_blossom(blossom_blinds[state],'')
 
 # main
 if __name__ == "__main__":
