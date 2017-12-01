@@ -20,6 +20,7 @@ fb = firebase.FirebaseApplication('https://gal-9000.firebaseio.com/', None)
 
 blossom_add = 'http://10.156.9.99:5555/s/'
 blinds_state = ''
+blossom_blinds = {'up':'fear2','down':'sad3'}
 
 # sending http requests
 import urllib2
@@ -58,13 +59,7 @@ def fb_check():
     blossom_s = fb.get('blossom','s')
     blossom_idle = fb.get('blossom','idle')
 
-    # command blossom
-    blossom_cmd = blossom_add+blossom_s+'/'+blossom_idle
-    print blossom_cmd
-    try:
-        urllib2.urlopen(blossom_cmd)
-    except:
-        pass
+    cmd_blossom(blossom_s, blossom_idle)
 
     # move blinds
     move_blinds(blinds_cmd)
@@ -72,6 +67,15 @@ def fb_check():
     fb.put('blinds','cmd','')
 
     return blinds_state
+
+def cmd_blossom(blossom_s, blossom_idle):
+    # command blossom
+    blossom_cmd = blossom_add+blossom_s+'/'+blossom_idle
+    print blossom_cmd
+    try:
+        urllib2.urlopen(blossom_cmd)
+    except:
+        pass
 
 # motor functions
 def check_motor_pos():
@@ -95,9 +99,11 @@ def move_blinds(state):
         # fb_put('down')
     elif (state == 'stop'):
         motor_move(0)
+        return
     else:
         return
     fb.put('blinds','state',state)
+    cmd_blossom(blossom_blinds[state])
 
 # main
 if __name__ == "__main__":
