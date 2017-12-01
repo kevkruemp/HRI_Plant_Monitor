@@ -15,7 +15,7 @@ GPIO.setup(gpio_in,GPIO.IN)
 from firebase import firebase
 fb = firebase.FirebaseApplication('https://gal-9000.firebaseio.com/', None)
 
-blossom_add = 'http://10.148.9.99:5555/s/'
+blossom_add = 'http://10.156.9.99:5555/s/'
 blinds_state = ''
 
 # sending http requests
@@ -38,6 +38,7 @@ class funHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         move_blinds(self.path[1:])
 
+# firebase functions
 def fb_thread():
     while(1):
         if (GPIO.input(gpio_in)):
@@ -59,12 +60,12 @@ def fb_check():
     urllib2.urlopen(blossom_cmd)
     print blossom_cmd
 
-    # erase blinds_cmd
+    # erase commands
     fb.put('blinds','cmd','')
 
     return blinds_state
 
-
+# motor functions
 def check_motor_pos():
     load = motorCtrl.get_load(1)[0]
     if (load == -100):
@@ -88,15 +89,18 @@ def move_blinds(state):
         motor_move(0)
     fb.put('blinds','state',state)
 
-
+# main
 if __name__ == "__main__":
+
+    # set function handler
+    motorHandler = funHandler
+
+    # init blinds state
     blinds_state = fb_check()
+
+    # start threading
     t = threading.Thread(target=fb_thread)
     t.start()
-    motorHandler = funHandler
-    # motorHandler.do_GET = motor_get
-    # motorHandler.do_GET = motorHandler.do_GET(simpleSrvr.funHandler, motor_get)
-    # motorHandler.do_GET = motor_get
 
     httpd = SocketServer.TCPServer(("", port), motorHandler)
     httpd.serve_forever()
