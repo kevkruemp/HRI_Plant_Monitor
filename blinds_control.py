@@ -12,6 +12,7 @@ gpio_up = 4
 gpio_down = 3
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(gpio_up,GPIO.IN)
+GPIO.setup(gpio_down,GPIO.IN)
 
 # firebase
 from firebase import firebase
