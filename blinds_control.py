@@ -45,10 +45,13 @@ class funHandler(BaseHTTPRequestHandler):
 # firebase functions
 def fb_thread():
     while(1):
-        if (GPIO.input(gpio_up)):
-            move_blinds('up')
-        elif (GPIO.input(gpio_down)):
-            move_blinds('down')
+        try:
+            if (GPIO.input(gpio_up)):
+                move_blinds('up')
+            elif (GPIO.input(gpio_down)):
+                move_blinds('down')
+        except KeyboardInterrupt:
+            return
 
 def fb_put(state):
     fb.put('blinds','state',state)
