@@ -16,9 +16,12 @@ import RPi.GPIO as GPIO
 gpio_up = 4
 # GPIO 3 (pin 5) goes down
 gpio_down = 3
+# GPIO 2 (pin 3) commands blossom
+gpio_blossom
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(gpio_up,GPIO.IN)
 GPIO.setup(gpio_down,GPIO.IN)
+GPIO.setup(gpio_blososm,GPIO.IN)
 
 import firebase_control
 from firebase_control import fb as gal9000
@@ -48,11 +51,13 @@ def gal9000_thread():
                 move_blinds('up')
             elif (GPIO.input(gpio_down)):
                 move_blinds('down')
+            elif (GPIO.input(gpio_blossom)):
+                blossom.cmd_blossom('yes','calm')
         except KeyboardInterrupt:
             return
 
-def gal9000_put(state):
-    gal9000.put('blinds','state',state)
+# def gal9000_put(state):
+    # gal9000.put('blinds','state',state)
 
 def gal9000_check():
     blinds_cmd = gal9000.get('blinds','cmd')
@@ -60,6 +65,7 @@ def gal9000_check():
     blossom_s = gal9000.get('blossom','s')
     blossom_idle = gal9000.get('blossom','idle')
 
+    # command blossom
     blossom.cmd_blossom(blossom_s, blossom_idle)
 
     # move blinds
@@ -84,18 +90,21 @@ def motor_move(speed):
 
 def move_blinds(state):
     blossom.cmd_blossom(blossom_blinds[state])
-    if (state == 'up'):
+    blinds_state = ''
+    if (state == 'raise'):
         motor_move(-1000)
+        blinds_state = 'up'
         # gal9000_put('up')
-    elif (state =='down'):
+    elif (state =='lower'):
         motor_move(1000)
+        blinds_state = 'down'
         # gal9000_put('down')
     elif (state == 'stop'):
         motor_move(0)
         return
     else:
         return
-    gal9000.put('blinds','state',state)
+    gal9000.put('blinds','state',blinds_state)
 
 # main
 if __name__ == "__main__":

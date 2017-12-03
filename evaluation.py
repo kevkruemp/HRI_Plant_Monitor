@@ -1,9 +1,16 @@
 import tkinter
 root = tkinter.Tk()
+tl = tkinter.Toplevel(root)
 root.withdraw()
+tl.withdraw()
+tl.attributes('-topmost',True)
+tl.lift()
+tl.focus_force()
+
 import tkMessageBox as tkm
 import random
 import time
+import os
 
 import firebase_control
 from firebase_control import fb as gal9000
@@ -26,11 +33,11 @@ subsys_list = ['Plants']
 plants_cmd = ['1','2','3','4']
 blinds_cmd = ['Raise','Lower']
 # test for 2 min
-time_test = 10
+time_test = 120
 
 cur_time = 0
 
-
+# give prompt
 def cmd_prompt(subsys):
     global test_cond
 
@@ -49,8 +56,16 @@ def cmd_prompt(subsys):
             return
         msg = msg+blinds_cmd+"the blinds"
 
-    tkm.showwarning('Command',msg)
+    if (test_cond<3):
+        tkm.showwarning('Command',msg+"\nPress 'OK' when you are sure the action is being performed.",parent=tl)
+    else:
+        raw_input(msg+"\nPress 'Enter' when you are sure the action is being performed.")
+
+    # move window to the top
+    root.lift()
     root.update()
+    tl.lift()
+    tl.focus_force()
 
 if __name__ == "__main__":
     global test_cond
@@ -65,7 +80,7 @@ if __name__ == "__main__":
         gal9000.put('evaluation', 'cond', str(test_cond))
         print raw_input("Test condition: "+str(test_cond)+". Press 'Enter' to continue")
 
-        # start blososm if necessary (cond 3 or 4)
+        # start blossom if necessary (cond 3 or 4) and update fb
         if (test_cond>=3):
             blossom.cmd_blossom('happy','slow_look')
 
@@ -78,10 +93,15 @@ if __name__ == "__main__":
 
             # choose random prompt time
             time_pause = random.choice(time_del)
+            print time_pause
             
             # block until time to prompt
             while(time.clock()-cur_time<time_pause):
                 pass
+
+            # move blossom if necessary
+            if (test_cond>=3):
+                blossom.cmd_blossom('happy')
 
             # give command prompt
             cmd_prompt(random.choice(subsys_list))
