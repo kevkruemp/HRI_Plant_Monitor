@@ -1,8 +1,9 @@
 {
-  "name": "particle-weather-station-alexa",
+  "name": "HRI_Plant_Monitor",
   "version": "0.1.0",
   "dependencies": {
     "alexa-sdk": "^1.0.21",
+    "firebase-admin": "^5.5.1",
     "particle-api-js": "^6.6.2"
   }
 }
