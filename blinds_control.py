@@ -61,43 +61,47 @@ def gal9000_thread():
 
 def blind_pos_thread():
     while(1):
-        motor_load = motorCtrl.get_load(1)
-        blind_state = ''
-        if (motor_load == -100):
-            blind_state = 'up'
-        elif(motor_load == 100):
-            blind_state = 'down'
-        if (blind_state != ''):
-            gal9000.put('blinds','state',blind_state)
+        try:
+            motor_load = motorCtrl.get_load(1)
+            blind_state = ''
+            if (motor_load == -100):
+                blind_state = 'up'
+            elif(motor_load == 100):
+                blind_state = 'down'
+            if (blind_state != ''):
+                gal9000.put('blinds','state',blind_state)
+        except KeyboardInterrupt:
+            return
+
 
 # def gal9000_put(state):
     # gal9000.put('blinds','state',state)
 
-def gal9000_check():
-    blinds_cmd = gal9000.get('blinds','cmd')
-    blinds_state = gal9000.get('blinds','state')
-    blossom_s = gal9000.get('blossom','s')
-    blossom_idle = gal9000.get('blossom','idle')
+# def gal9000_check():
+#     blinds_cmd = gal9000.get('blinds','cmd')
+#     blinds_state = gal9000.get('blinds','state')
+#     blossom_s = gal9000.get('blossom','s')
+#     blossom_idle = gal9000.get('blossom','idle')
 
-    # command blossom
-    blossom.cmd_blossom(blossom_s, blossom_idle)
+#     # command blossom
+#     blossom.cmd_blossom(blossom_s, blossom_idle)
 
-    # move blinds
-    move_blinds(blinds_cmd)
-    # erase commands
-    gal9000.put('blinds','cmd','')
+#     # move blinds
+#     move_blinds(blinds_cmd)
+#     # erase commands
+#     gal9000.put('blinds','cmd','')
 
-    return blinds_state
+#     return blinds_state
 
 # motor functions
-def check_motor_pos():
-    load = motorCtrl.get_load(1)[0]
-    if (load == -100):
-        return 'down'
-    elif (load == 100):
-        return 'up'
-    else:
-        return 'mid'
+# def check_motor_pos():
+#     load = motorCtrl.get_load(1)[0]
+#     if (load == -100):
+#         return 'down'
+#     elif (load == 100):
+#         return 'up'
+#     else:
+#         return 'mid'
 
 def motor_move(speed):
     motorCtrl.move_wheel(1, speed)
@@ -132,6 +136,9 @@ if __name__ == "__main__":
     # start threading
     t = threading.Thread(target=gal9000_thread)
     t.start()
+
+    c = threading.start(target=blind_pos_thread)
+    c.start()
 
     httpd = SocketServer.TCPServer(("", port), motorHandler)
     httpd.serve_forever()
