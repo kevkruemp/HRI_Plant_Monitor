@@ -32,6 +32,7 @@ def move_wheel(motor, speed):
     while(1):
         try:
             load = motors.get_present_load({motor})[0]
+            print load
             # load == 100 indicates stalling at top or bottom
             if ((abs(load)-96)<2):
                 raise KeyboardInterrupt
