@@ -20,7 +20,7 @@ def set_speed(motor, speed):
 def move_wheel(motor, speed):
     # t = threading.Thread(target=set_speed,args=(motor,speed))
     # t.start()
-    motors.set_moving_speed({motor:speed})
+    motors.set_moving_speed({motor: speed})
     print "Moving motor "+str(motor)+" speed "+str(speed)
     while(1):
         try:
