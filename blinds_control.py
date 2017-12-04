@@ -50,10 +50,10 @@ def gal9000_thread():
             if (GPIO.input(gpio_up)):
                 print 'Raising'
                 move_blinds('raise')
-            if (GPIO.input(gpio_down)):
+            elif (GPIO.input(gpio_down)):
                 print 'Lowering'
                 move_blinds('lower')
-            if (GPIO.input(gpio_blossom)):
+            elif (GPIO.input(gpio_blossom)):
                 print 'Blossoming'
                 blossom.cmd_blossom('yes','calm')
         except KeyboardInterrupt:
