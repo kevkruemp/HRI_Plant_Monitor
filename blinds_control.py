@@ -127,18 +127,21 @@ def move_blinds(cmd):
 # main
 if __name__ == "__main__":
 
-    # set function handler
-    motorHandler = funHandler
+    try:
+        # set function handler
+        motorHandler = funHandler
 
-    # init blinds state
-    blinds_state = gal9000_check()
+        # init blinds state
+        blinds_state = gal9000_check()
 
-    # start threading
-    t = threading.Thread(target=gal9000_thread)
-    t.start()
+        # start threading
+        t = threading.Thread(target=gal9000_thread)
+        t.start()
 
-    c = threading.Thread(target=blind_pos_thread)
-    c.start()
+        c = threading.Thread(target=blind_pos_thread)
+        c.start()
 
-    httpd = SocketServer.TCPServer(("", port), motorHandler)
-    httpd.serve_forever()
+        httpd = SocketServer.TCPServer(("", port), motorHandler)
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        return
