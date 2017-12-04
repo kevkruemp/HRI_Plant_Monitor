@@ -77,21 +77,21 @@ def blind_pos_thread():
 # def gal9000_put(state):
     # gal9000.put('blinds','state',state)
 
-# def gal9000_check():
-#     blinds_cmd = gal9000.get('blinds','cmd')
-#     blinds_state = gal9000.get('blinds','state')
-#     blossom_s = gal9000.get('blossom','s')
-#     blossom_idle = gal9000.get('blossom','idle')
+def gal9000_check():
+    blinds_cmd = gal9000.get('blinds','cmd')
+    blinds_state = gal9000.get('blinds','state')
+    blossom_s = gal9000.get('blossom','s')
+    blossom_idle = gal9000.get('blossom','idle')
 
-#     # command blossom
-#     blossom.cmd_blossom(blossom_s, blossom_idle)
+    # command blossom
+    blossom.cmd_blossom(blossom_s, blossom_idle)
 
-#     # move blinds
-#     move_blinds(blinds_cmd)
-#     # erase commands
-#     gal9000.put('blinds','cmd','')
+    # move blinds
+    move_blinds(blinds_cmd)
+    # erase commands
+    gal9000.put('blinds','cmd','')
 
-#     return blinds_state
+    return blinds_state
 
 # motor functions
 # def check_motor_pos():
