@@ -9,6 +9,7 @@ ports = pd.get_available_ports()
 
 # connect to port
 motors = pd.DxlIO(ports[0], 1000000)
+# motors = pd.DxlIO(ports[0], 57600)
 # get list of motors
 print 'Scanning for motors...'
 motor_list = motors.scan()

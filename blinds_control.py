@@ -132,7 +132,7 @@ if __name__ == "__main__":
         motorHandler = funHandler
 
         # init blinds state
-        blinds_state = gal9000_check()
+        # blinds_state = gal9000_check()
 
         # start threading
         t = threading.Thread(target=gal9000_thread)
