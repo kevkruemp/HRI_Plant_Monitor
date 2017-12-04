@@ -23,7 +23,7 @@ def move_wheel(motor, speed):
     # t = threading.Thread(target=set_speed,args=(motor,speed))
     # t.start()
 
-    motors.set_torque_limit({motor:100})
+    # motors.set_torque_limit({motor:100})
     motors.set_moving_speed({motor: speed})
     motors.set_torque_limit({motor:100})
     # t = threading.Thread(target=load_thread,args=(motor))
@@ -33,7 +33,7 @@ def move_wheel(motor, speed):
         try:
             load = motors.get_present_load({motor})[0]
             # load == 100 indicates stalling at top or bottom
-            if (abs(load)==96.5):
+            if ((abs(load)-96)<2):
                 raise KeyboardInterrupt
         except KeyboardInterrupt:
             motors.set_moving_speed({motor: 0})
