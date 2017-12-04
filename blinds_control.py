@@ -144,4 +144,4 @@ if __name__ == "__main__":
         httpd = SocketServer.TCPServer(("", port), motorHandler)
         httpd.serve_forever()
     except KeyboardInterrupt:
-        return
+        pass
