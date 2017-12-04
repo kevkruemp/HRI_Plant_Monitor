@@ -116,18 +116,18 @@ def move_blinds(cmd):
     blinds_state = ''
     if (cmd == 'raise'):
         motor_move(-1000)
-        # blinds_state = 'up'
+        blinds_state = 'up'
         # gal9000_put('up')
     elif (cmd =='lower'):
         motor_move(1000)
-        # blinds_state = 'down'
+        blinds_state = 'down'
         # gal9000_put('down')
     elif (cmd == 'stop'):
         motor_move(0)
         return
     else:
         return
-    # gal9000.put('blinds','state',blinds_state)
+    gal9000.put('blinds','state',blinds_state)
 
 def set_torque():
     motorCtrl.motors.set_torque_limit({1:100})
@@ -148,8 +148,8 @@ if __name__ == "__main__":
         # start threading
         t = threading.Thread(target=gal9000_thread)
         t.start()
-        c = threading.Thread(target=blind_pos_thread)
-        c.start()
+        # c = threading.Thread(target=blind_pos_thread)
+        # c.start()
 
         httpd = SocketServer.TCPServer(("", port), motorHandler)
         httpd.serve_forever()
