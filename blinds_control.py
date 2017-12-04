@@ -64,11 +64,14 @@ def blind_pos_thread():
         try:
             motor_load = motorCtrl.get_load(1)
             blind_state = ''
-            if (motor_load == -100):
+            if (motor_load <= -95):
                 blind_state = 'up'
-            elif(motor_load == 100):
+            elif(motor_load >= 95):
                 blind_state = 'down'
             if (blind_state != ''):
+                motorCtrl.motors.set_torque_limit({1:100})
+                motor_move(0)
+                motorCtrl.motors.set_torque_limit({1:100})
                 gal9000.put('blinds','state',blind_state)
                 print blind_state
         except KeyboardInterrupt:

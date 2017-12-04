@@ -40,13 +40,13 @@ def move_wheel(motor, speed):
 def get_load(motor):
     return motors.get_present_load({motor})
 
-def load_thread(motor):
-    while(1):
-        try:
-            get_load(motor)
-            if (load==100):
-                return 'up'
-            elif(load==-100):
-                return 'down'
-        except KeyboardInterrupt:
-            break
+# def load_thread(motor):
+#     while(1):
+#         try:
+#             load = get_load(motor)
+#             if (load==100):
+#                 return 'up'
+#             elif(load==-100):
+#                 return 'down'
+#         except KeyboardInterrupt:
+#             break
