@@ -14,6 +14,7 @@ print 'Found motors: ' + str(motor_list)
 
 def move_wheel(motor, speed):
     motors.set_moving_speed({motor: speed})
+    print "Moving motor "+str(motor)+" speed "+str(speed)
     while(1):
         try:
             load = motors.get_present_load({motor})[0]
