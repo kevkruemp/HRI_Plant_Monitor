@@ -8,7 +8,7 @@ import motor_control as motorCtrl
 import blossom_control as blossom
 # blossom info
 blossom_add = blossom.blossom_add
-blossom_blinds = {'raise':'fear2','lower':'sad3'}
+blossom_blinds = {'raise':'fear2','lower':'sad3','':'yes'}
 
 # GPIO setup
 import RPi.GPIO as GPIO
