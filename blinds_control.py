@@ -115,11 +115,11 @@ def move_blinds(cmd):
     blossom.cmd_blossom(blossom_blinds[cmd])
     blinds_state = ''
     if (cmd == 'raise'):
-        motor_move(-2000)
+        motor_move(-1000)
         blinds_state = 'up'
         # gal9000_put('up')
     elif (cmd =='lower'):
-        motor_move(2000)
+        motor_move(1000)
         blinds_state = 'down'
         # gal9000_put('down')
     elif (cmd == 'stop'):
