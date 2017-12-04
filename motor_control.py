@@ -1,5 +1,7 @@
 # pypot dynamixel library
 import pypot.dynamixel as pd
+# threading for motor control
+import threading
 
 # get ports
 # USB2AX will be the first result
@@ -7,12 +9,18 @@ ports = pd.get_available_ports()
 
 # connect to port
 motors = pd.DxlIO(ports[0], 1000000)
+# motors = pd.DxlIO(ports[0], 57600)
 # get list of motors
 print 'Scanning for motors...'
 motor_list = motors.scan()
 print 'Found motors: ' + str(motor_list)
 
+def set_speed(motor, speed):
+    motors.set_moving_speed({motor:speed})
+
 def move_wheel(motor, speed):
+    # t = threading.Thread(target=set_speed,args=(motor,speed))
+    # t.start()
     motors.set_moving_speed({motor: speed})
     print "Moving motor "+str(motor)+" speed "+str(speed)
     while(1):

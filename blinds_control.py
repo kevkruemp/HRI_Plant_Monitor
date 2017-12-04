@@ -61,14 +61,18 @@ def gal9000_thread():
 
 def blind_pos_thread():
     while(1):
-        motor_load = motorCtrl.get_load(1)
-        blind_state = ''
-        if (motor_load == -100):
-            blind_state = 'up'
-        elif(motor_load == 100):
-            blind_state = 'down'
-        if (blind_state != ''):
-            gal9000.put('blinds','state',blind_state)
+        try:
+            motor_load = motorCtrl.get_load(1)
+            blind_state = ''
+            if (motor_load == -100):
+                blind_state = 'up'
+            elif(motor_load == 100):
+                blind_state = 'down'
+            if (blind_state != ''):
+                gal9000.put('blinds','state',blind_state)
+        except KeyboardInterrupt:
+            return
+
 
 # def gal9000_put(state):
     # gal9000.put('blinds','state',state)
@@ -90,14 +94,14 @@ def gal9000_check():
     return blinds_state
 
 # motor functions
-def check_motor_pos():
-    load = motorCtrl.get_load(1)[0]
-    if (load == -100):
-        return 'down'
-    elif (load == 100):
-        return 'up'
-    else:
-        return 'mid'
+# def check_motor_pos():
+#     load = motorCtrl.get_load(1)[0]
+#     if (load == -100):
+#         return 'down'
+#     elif (load == 100):
+#         return 'up'
+#     else:
+#         return 'mid'
 
 def motor_move(speed):
     motorCtrl.move_wheel(1, speed)
@@ -123,15 +127,22 @@ def move_blinds(cmd):
 # main
 if __name__ == "__main__":
 
-    # set function handler
-    motorHandler = funHandler
+    try:
+        # set function handler
+        motorHandler = funHandler
 
-    # init blinds state
-    blinds_state = gal9000_check()
+        # init blinds state
+        # blinds_state = gal9000_check()
 
-    # start threading
-    t = threading.Thread(target=gal9000_thread)
-    t.start()
+        # start threading
+        t = threading.Thread(target=gal9000_thread)
+        t.start()
 
-    httpd = SocketServer.TCPServer(("", port), motorHandler)
-    httpd.serve_forever()
+        c = threading.Thread(target=blind_pos_thread)
+        c.start()
+
+        httpd = SocketServer.TCPServer(("", port), motorHandler)
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.shutdown()
+        pass
