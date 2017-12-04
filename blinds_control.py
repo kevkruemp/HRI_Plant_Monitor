@@ -132,6 +132,8 @@ if __name__ == "__main__":
         # set function handler
         motorHandler = funHandler
 
+        motorCtrl.motors.set_torque_limit({1:100})
+
         # init blinds state
         # blinds_state = gal9000_check()
 
