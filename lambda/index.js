@@ -1,13 +1,29 @@
-/* eslint-disable  func-names */
-/* eslint quote-props: ["error", "consistent"]*/
-/**
- * This sample demonstrates a simple skill built with the Amazon Alexa Skills
- * nodejs skill development kit.
- * This sample supports multiple lauguages. (en-US, en-GB, de-DE).
- * The Intent Schema, Custom Slots and Sample Utterances for this skill, as well
- * as testing instructions are located at https://github.com/alexa/skill-sample-nodejs-fact
- **/
-'use strict';
+/* Copyright 2017 Kevin Kruempelstaedter
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this 
+software and associated documentation files (the "Software"), to deal in the 
+Software without restriction, including without limitation the rights to use, copy, 
+modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
+and to permit persons to whom the Software is furnished to do so, subject to the 
+following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies 
+or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
+ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This software provides the AWS lambda code for the HRC^2 Smartlab implemented
+for the Human Robot Collaboration and Communication lab at Cornell University.
+
+Authors:
+Kevin Kruempelstaedter - kevkruemp@gmail.com
+Michael Suguitan
+*/
 
 // import libraries
 const Keys = require('./keys'); // storage file for particle device keys
@@ -30,30 +46,19 @@ var BLINDS_DEVICE_ID = Keys.BLINDS_DEVICE_ID;
 var BLINDS_TOKEN = Keys.BLINDS_TOKEN;
 var evalmode = '';
 
-var states = {
-    GUESSMODE: '_GUESSMODE', // User is trying to guess the number.
-    STARTMODE: '_STARTMODE'  // Prompt the user to start or restart the game.
-};
-
 exports.handler = function(event, context, callback){
 	// init function
+	//context.callbackWaitsForEmptyEventLoop = false;  //<---Important for firebase, but also breaks things
 	// firebase initialization
-	context.callbackWaitsForEmptyEventLoop = false;  //<---Important
-	/*var config = {
-        apiKey: "AIzaSyAm1V5_UjuW-pAtb9Kgeq3iCi58j_Kz5a0",
-        authDomain: "gal-9000.firebaseapp.com",
-        databaseURL: "https://gall-9000.firebaseio.com",
-        storageBucket: "gal-9000.appspot.com",
-    };*/
 	if(admin.apps.length == 0) {   // <---Important!!! In lambda, it will cause double initialization.
         admin.initializeApp({
  			 credential: admin.credential.cert(serviceAccount),
   			 databaseURL: "https://gal-9000.firebaseio.com"
 		});
-		//admin.initializeApp(config);
     }
-    fbGet("/evaluation/cond").then(data => {
-  		console.log(data); // prints "lol"
+    // Read in the evaluation condition being tested
+    fbGet("/evaluation/cond").then(data => { // do not initialize alexa until the data is read in
+  		console.log("eval condtion: ", data); // logs evaluation condition
   		evalmode = data;
   		var alexa = Alexa.handler(event, context, callback);
 		alexa.appId = APP_ID;
@@ -63,8 +68,6 @@ exports.handler = function(event, context, callback){
   		console.log("error saving to firebase: ");
   		console.log(e);
 	});
-	// Get a reference to the database service
-    
 };
 
 var handlers = {
@@ -74,7 +77,7 @@ var handlers = {
     	var repromptText = "What would you like to do?";
     	this.emit(':ask',speechOutput, repromptText);
 	},
-	'PlanterIntent': function() {
+	'PlanterIntent': function() {	// Intent function called for planter related commands
 		var intentObj = this.event.request.intent; // setup a slots object
 		var objectID = intentObj.slots.objectID.value;
 		var plant1 = intentObj.slots.FIRSTPLANT.value;
@@ -105,6 +108,7 @@ var handlers = {
 		console.log("plants = " + plants);
 
 		// Determine speech based on number of plants requested
+		var speechOutput = "";
 		if(typeof plant2 == 'undefined'){ // if a second plant was not defined
 			speechOutput = "OK, watering plant " + plant1;
 		}
@@ -117,26 +121,58 @@ var handlers = {
 		else {
 			speechOutput = "OK, watering plants " + plant1 +", " + plant2 +", " + plant3 +", and " + plant4;
 		}
-
-		callDirectiveService(this.event, speechOutput); // give an alexa response immediately
+		console.log(speechOutput);
+		console.log("Evaluation mode: ", evalmode);
+		if(evalmode == 2 || evalmode == 4){ // If alexa response is enabled
+			callDirectiveService(this.event, speechOutput); // give an alexa response immediately
+			console.log("Directive called");
+		}
+		if(evalmode == 3 || evalmode == 4){
+			callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
+			console.log("Blossom triggered");
+		}
 		callParticle(this.event,"waterSome",plants,PLANTER_DEVICE_ID, PLANTER_TOKEN);		
-		callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
-		this.emit(':tell','Completed');
+		if(evalmode == 2 || evalmode == 4){ // If alexa response is enabled
+			this.emit(':tell','Completed');
+		}
+		else{
+			this.emit(':tell',' ');
+		}
 	},
-	'BlindsIntent': function() {
+
+	'BlindsIntent': function() { // Intent function called for blinds related commands
 		var intentObj = this.event.request.intent; // setup a slots object
 		var objectID = intentObj.slots.objectID.value;
 		console.log("objectID = " + objectID);
 
 		if(objectID == "raise"){
+			console.log(evalmode);
 			callParticle(this.event,"controlled","D7,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
-			fbPut("/hello", "world").then(res => {
-				this.emit(':tell',"Ok, raising the blinds.");
+			fbPut("/blinds/cmd", "raise").then(res => {
+				if(evalmode == 3 || evalmode == 4){
+					callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
+				}
+				if(evalmode == 2 || evalmode == 4){
+					this.emit(':tell',"Ok, raising the blinds."); // Dont respond with alexa until the data has been successfully entered
+				}
+				else{
+					this.emit(':tell',' ');
+				}
 			});
 		}
 		else if(objectID == "lower"){
 			callParticle(this.event,"controlled","D6,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
-			this.emit(':tell',"Ok, lowering the blinds.");
+			fbPut("/blinds/cmd", "raise").then(res => {
+				if(evalmode == 3 || evalmode == 4){
+					callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
+				}
+				if(evalmode == 2 || evalmode == 4){
+					this.emit(':tell',"Ok, lowering the blinds."); // Dont respond with alexa until the data has been successfully entered
+				}
+				else{
+					this.emit(':tell',' ');
+				}
+			});
 		}
 		else{
 			this.emit('unhandled');
@@ -155,26 +191,6 @@ var handlers = {
 
 function testGuards(event, intentObj){
 	// FMR logic checking to prevent system breakage
-}
-
-function sendToFirebase(){
-	var database = admin.database();
-	var blinds_state = database.ref('/blinds/state').once('value', function(data){
-		console.log("Blinds state:", data.val());
-		return data.val();
-		});
-	//var updates = {};
-	//updates['blinds/cmd'] = "lambda";
-	database.ref().child("hello") // creates a key called hello
-    .set("world")                            // sets the key value to world
-    .then(function (data) {
-      console.log('Firebase data: ', data);        
-      context.succeed();                  // important that you don't call succeed until you are called back otherwise nothing will be saved to the database!
-    })
-    .catch(function (error) {
-        console.log('Firebase error: ', error);
-        context.fail();
-    });
 }
 
 function callParticle(event, func, input, Device_ID, token) {
@@ -206,6 +222,7 @@ function callDirectiveService(event, message) {
     });
 }
 
+// firebase http boilerplate
 function fbGet(key){
   return new Promise((resolve, reject) => {
     var options = {
