@@ -18,18 +18,19 @@ def set_speed(motor, speed):
     motors.set_moving_speed({motor:speed})
 
 def move_wheel(motor, speed):
-    t = threading.Thread(target=set_speed,args=(motor,speed))
-    t.start()
+    # t = threading.Thread(target=set_speed,args=(motor,speed))
+    # t.start()
+    motors.set_moving_speed({motor:speed})
     print "Moving motor "+str(motor)+" speed "+str(speed)
-    # while(1):
-    #     try:
-    #         load = motors.get_present_load({motor})[0]
-    #         # load == 100 indicates stalling at top or bottom
-    #         if (abs(load)==100):
-    #             raise KeyboardInterrupt
-    #     except KeyboardInterrupt:
-    #         motors.set_moving_speed({motor: 0})
-    #         break
+    while(1):
+        try:
+            load = motors.get_present_load({motor})[0]
+            # load == 100 indicates stalling at top or bottom
+            if (abs(load)==100):
+                raise KeyboardInterrupt
+        except KeyboardInterrupt:
+            motors.set_moving_speed({motor: 0})
+            break
 
 def get_load(motor):
     return motors.get_present_load({motor})
