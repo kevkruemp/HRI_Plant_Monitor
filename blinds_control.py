@@ -21,7 +21,7 @@ gpio_blossom = 2
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(gpio_up,GPIO.IN)
 GPIO.setup(gpio_down,GPIO.IN)
-GPIO.setup(gpio_blososm,GPIO.IN)
+GPIO.setup(gpio_blossom,GPIO.IN)
 
 import firebase_control
 from firebase_control import fb as gal9000
