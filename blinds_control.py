@@ -137,7 +137,7 @@ if __name__ == "__main__":
     t = threading.Thread(target=gal9000_thread)
     t.start()
 
-    c = threading.start(target=blind_pos_thread)
+    c = threading.Thread(target=blind_pos_thread)
     c.start()
 
     httpd = SocketServer.TCPServer(("", port), motorHandler)
