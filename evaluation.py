@@ -41,11 +41,12 @@ cur_time = 0
 def cmd_prompt(subsys):
     global test_cond
 
-    msg = "Alexa, tell smart lab to "
+    msg = "\"Alexa, tell smart lab to "
     if (subsys == 'Plants'):
-        msg = msg+"water plants: "
+        msg = msg+"water plants:"
         for i in range(0,random.choice([1,2])):
-            msg = msg+random.choice(plants_cmd)+" "
+            msg = msg+" "+random.choice(plants_cmd)
+        msg = msg+"\""
     elif (subsys == 'Blinds'):
         blinds_state = gal9000.get('blinds','state')
         if (blinds_state == 'up'):
@@ -56,8 +57,10 @@ def cmd_prompt(subsys):
             return
         msg = msg+blinds_cmd+"the blinds"
 
+    # show prompt in new box if cond 1 or 2
     if (test_cond<3):
         tkm.showwarning('Command',msg+"\nPress 'OK' when you are sure the action is being performed.",parent=tl)
+    # show prompt in terminal if cond 3 or 4
     else:
         raw_input(msg+"\nPress 'Enter' when you are sure the action is being performed.")
 
@@ -82,7 +85,7 @@ if __name__ == "__main__":
 
         # start blossom if necessary (cond 3 or 4) and update fb
         if (test_cond>=3):
-            blossom.cmd_blossom('happy','slow_look')
+            blossom.cmd_blossom('happy','calm')
 
         # init timer
         start = time.clock()
@@ -101,7 +104,7 @@ if __name__ == "__main__":
 
             # move blossom if necessary
             if (test_cond>=3):
-                blossom.cmd_blossom('happy')
+                blossom.cmd_blossom('happy2')
 
             # give command prompt
             cmd_prompt(random.choice(subsys_list))

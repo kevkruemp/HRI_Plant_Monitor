@@ -8,7 +8,7 @@ import motor_control as motorCtrl
 import blossom_control as blossom
 # blossom info
 blossom_add = blossom.blossom_add
-blossom_blinds = {'up':'fear2','down':'sad3'}
+blossom_blinds = {'raise':'fear2','lower':'sad3'}
 
 # GPIO setup
 import RPi.GPIO as GPIO
@@ -56,6 +56,17 @@ def gal9000_thread():
         except KeyboardInterrupt:
             return
 
+def blind_pos_thread():
+    while(1):
+        motor_load = motorCtrl.get_load(1)
+        blind_state = ''
+        if (motor_load == -100):
+            blind_state = 'up'
+        elif(motor_load == 100):
+            blind_state = 'down'
+        if (blind_state != ''):
+            gal9000.put('blinds','state',blind_state)
+
 # def gal9000_put(state):
     # gal9000.put('blinds','state',state)
 
@@ -88,18 +99,18 @@ def check_motor_pos():
 def motor_move(speed):
     motorCtrl.move_wheel(1, speed)
 
-def move_blinds(state):
-    blossom.cmd_blossom(blossom_blinds[state])
+def move_blinds(cmd):
+    blossom.cmd_blossom(blossom_blinds[cmd])
     blinds_state = ''
-    if (state == 'raise'):
+    if (cmd == 'raise'):
         motor_move(-1000)
         blinds_state = 'up'
         # gal9000_put('up')
-    elif (state =='lower'):
+    elif (cmd =='lower'):
         motor_move(1000)
         blinds_state = 'down'
         # gal9000_put('down')
-    elif (state == 'stop'):
+    elif (cmd == 'stop'):
         motor_move(0)
         return
     else:
