@@ -70,6 +70,7 @@ def blind_pos_thread():
                 blind_state = 'down'
             if (blind_state != ''):
                 gal9000.put('blinds','state',blind_state)
+                print blind_state
         except KeyboardInterrupt:
             return
 
@@ -137,7 +138,6 @@ if __name__ == "__main__":
         # start threading
         t = threading.Thread(target=gal9000_thread)
         t.start()
-
         c = threading.Thread(target=blind_pos_thread)
         c.start()
 
