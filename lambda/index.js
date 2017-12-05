@@ -147,10 +147,10 @@ var handlers = {
 
 		if(objectID == "raise"){
 			console.log(evalmode);
-			callParticle(this.event,"controlled","D7,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
+			callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
 			fbPut("/blinds/cmd", "raise").then(res => {
 				if(evalmode == 3 || evalmode == 4){
-					callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
+					callParticle(this.event,"controlled","D7,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
 				}
 				if(evalmode == 2 || evalmode == 4){
 					this.emit(':tell',"Ok, raising the blinds."); // Dont respond with alexa until the data has been successfully entered
@@ -161,10 +161,10 @@ var handlers = {
 			});
 		}
 		else if(objectID == "lower"){
-			callParticle(this.event,"controlled","D6,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
+			callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
 			fbPut("/blinds/cmd", "raise").then(res => {
 				if(evalmode == 3 || evalmode == 4){
-					callParticle(this.event,"controlled","D0,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
+					callParticle(this.event,"controlled","D6,HIGH",BLINDS_DEVICE_ID,BLINDS_TOKEN);
 				}
 				if(evalmode == 2 || evalmode == 4){
 					this.emit(':tell',"Ok, lowering the blinds."); // Dont respond with alexa until the data has been successfully entered
