@@ -18,6 +18,8 @@ from firebase_control import fb as gal9000
 import blossom_control as blossom
 blossom_add = blossom.blossom_add
 
+# typing tests
+typing_tests = range(26,36)
 # test conditions
 # 1 = A:X, B:X
 # 2 = A:O, B:X
@@ -27,7 +29,7 @@ test_cases = [1, 2, 3, 4]
 test_cond = 0
 
 time_del = [10, 15, 20, 25, 30]
-time_del = [2]
+# time_del = [2]
 # subsys_list = ['Plants','Blinds']
 subsys_list = ['Plants']
 plants_cmd = ['1','2','3','4']
@@ -43,8 +45,14 @@ def cmd_prompt(subsys):
 
     msg = "\"Alexa, tell smart lab to "
     if (subsys == 'Plants'):
-        msg = msg+"water plants:"
-        for i in range(0,random.choice([1,2])):
+        num_plants = random.choice([1,2])
+        msg = msg+"water plant"
+        if (num_plants == 2):
+            msg = msg+"s"
+        msg = msg+":"
+        for i in range(0,num_plants):
+            if (i == 1):
+                msg = msg+" and"
             msg = msg+" "+random.choice(plants_cmd)
         msg = msg+"\""
     elif (subsys == 'Blinds'):
@@ -62,7 +70,7 @@ def cmd_prompt(subsys):
         tkm.showwarning('Command',msg+"\nPress 'OK' when you are sure the action is being performed.",parent=tl)
     # show prompt in terminal if cond 3 or 4
     else:
-        raw_input(msg+"\nPress 'Enter' when you are sure the action is being performed.")
+        raw_input(msg+"\nPress 'Enter' in this window when you are sure the action is being performed.")
 
     # move window to the top
     root.lift()
@@ -79,6 +87,9 @@ if __name__ == "__main__":
         # get the test condition
         test_cond = random.choice(test_cases)
         test_cases.remove(test_cond)
+        # get the typing test
+        type_test = random.choice(typing_tests)
+        
         # update firebase
         gal9000.put('evaluation', 'cond', str(test_cond))
         print raw_input("Test condition: "+str(test_cond)+". Press 'Enter' to continue")
@@ -88,18 +99,18 @@ if __name__ == "__main__":
             blossom.cmd_blossom('happy','calm')
 
         # init timer
-        start = time.clock()
+        start = time.time()
 
         # check if test should end
-        while (time.clock()-start<time_test):
-            cur_time = time.clock()
+        while (time.time()-start<time_test):
+            cur_time = time.time()
 
             # choose random prompt time
             time_pause = random.choice(time_del)
-            print time_pause
+            # print time_pause
             
             # block until time to prompt
-            while(time.clock()-cur_time<time_pause):
+            while(time.time()-cur_time<time_pause):
                 pass
 
             # move blossom if necessary

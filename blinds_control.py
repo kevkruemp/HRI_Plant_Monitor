@@ -63,13 +63,18 @@ def blind_pos_thread():
     while(1):
         try:
             motor_load = motorCtrl.get_load(1)
+            print motor_load
             blind_state = ''
-            if (motor_load == -100):
+            if (motor_load == 96.5):
                 blind_state = 'up'
-            elif(motor_load == 100):
+            elif(motor_load == -96.5):
                 blind_state = 'down'
             if (blind_state != ''):
+                set_torque()
+                motor_move(0)
+                set_torque()
                 gal9000.put('blinds','state',blind_state)
+                print blind_state
         except KeyboardInterrupt:
             return
 
@@ -124,6 +129,9 @@ def move_blinds(cmd):
         return
     gal9000.put('blinds','state',blinds_state)
 
+def set_torque():
+    motorCtrl.motors.set_torque_limit({1:100})
+
 # main
 if __name__ == "__main__":
 
@@ -131,15 +139,17 @@ if __name__ == "__main__":
         # set function handler
         motorHandler = funHandler
 
+        set_torque()
+        # motorCtrl.motors.set_torque_limit({1:100})
+
         # init blinds state
         # blinds_state = gal9000_check()
 
         # start threading
         t = threading.Thread(target=gal9000_thread)
         t.start()
-
-        c = threading.Thread(target=blind_pos_thread)
-        c.start()
+        # c = threading.Thread(target=blind_pos_thread)
+        # c.start()
 
         httpd = SocketServer.TCPServer(("", port), motorHandler)
         httpd.serve_forever()
