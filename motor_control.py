@@ -2,6 +2,7 @@
 import pypot.dynamixel as pd
 # threading for motor control
 import threading
+import time
 
 # get ports
 # USB2AX will be the first result
@@ -28,6 +29,7 @@ def move_wheel(motor, speed):
     # motors.enable_torque({motor})
     motors.set_torque_limit({motor:100})
     motors.set_moving_speed({motor: speed})
+    time.sleep(0.5)
     motors.set_torque_limit({motor:100})
     motors.set_moving_speed({motor: speed})
     # t = threading.Thread(target=load_thread,args=(motor))
@@ -40,7 +42,7 @@ def move_wheel(motor, speed):
             # load == 100 indicates stalling at top or bottom
             if (abs(abs(load)-96)<2):
                 raise KeyboardInterrupt
-        except KeyboardInterrupt:
+        except KeyboardInterrupt, DxlTimeoutError:
             motors.set_moving_speed({motor: 0})
             break
 

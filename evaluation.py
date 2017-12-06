@@ -11,6 +11,7 @@ import tkMessageBox as tkm
 import random
 import time
 import os
+random.seed(time.time())
 
 import firebase_control
 from firebase_control import fb as gal9000
@@ -22,7 +23,7 @@ import datetime
 test_file = open("./eval/eval"+str(datetime.datetime.now())+".txt",'w')
 
 # debug flag
-testing = 1
+testing = 0
 
 # typing tests
 typing_tests = range(28,36)
@@ -31,7 +32,7 @@ typing_tests = range(28,36)
 # 2 = A:O, B:X
 # 3 = A:X, B:O
 # 4 = A:O, B:O
-test_cases = [1, 2, 3, 4]
+test_cases = [1]
 test_cond = 0
 
 # random time delays
@@ -116,9 +117,9 @@ if __name__ == "__main__":
                 blossom.cmd_blossom('reset')
             cmd_prompt(random.choice(subsys_list))
 
-    print "Take typing tests 26 and 27"
-    test_file.write(raw_input("Test 26 WPM: ")+"\n")
-    test_file.write(raw_input("Test 27 WPM: ")+"\n\n")
+    print "Take typing tests 26"
+    test_file.write(raw_input("Test 26 WPM: ")+"\n\n")
+    # test_file.write(raw_input("Test 27 WPM: ")+"\n\n")
 
     # start test
     print "Start test"
