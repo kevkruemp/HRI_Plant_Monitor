@@ -51,7 +51,7 @@ def move_wheel(motor, speed):
             print load
             # print load
             # load == 100 indicates stalling at top or bottom
-            if (abs(abs(load)-96)<2):
+            # if (abs(abs(load)-96)<2):
             if (abs(load+np.sign(speed)*96)<2):
                 raise KeyboardInterrupt
         except KeyboardInterrupt, DxlTimeoutError:
