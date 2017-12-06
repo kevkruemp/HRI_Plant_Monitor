@@ -28,6 +28,7 @@ def move_wheel(motor, speed):
     # motors.set_moving_speed({motor: speed})
     # motors.enable_torque({motor})
     while (motors.get_moving_speed({motor})==0):
+        print "Stall"
         motors.set_torque_limit({motor:100})
         time.sleep(0.2)
         motors.set_moving_speed({motor: speed})
