@@ -46,6 +46,8 @@ def move_wheel(motor, speed):
             motors.set_moving_speed({motor: speed})
             time.sleep(0.2)
             load = motors.get_present_load({motor})[0]
+            print motors.get_moving_speed({motor})[0]
+            print load
             # print load
             # load == 100 indicates stalling at top or bottom
             if (abs(abs(load)-96)<2):
