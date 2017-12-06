@@ -41,6 +41,10 @@ def move_wheel(motor, speed):
     print "Moving motor "+str(motor)+" speed "+str(speed)
     while(1):
         try:
+            motors.set_torque_limit({motor:100})
+            time.sleep(0.2)
+            motors.set_moving_speed({motor: speed})
+            time.sleep(0.2)
             load = motors.get_present_load({motor})[0]
             # print load
             # load == 100 indicates stalling at top or bottom
