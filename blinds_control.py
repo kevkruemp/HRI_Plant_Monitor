@@ -43,7 +43,7 @@ class funHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         move_blinds(self.path[1:])
 
-# firebase functions
+# poll gal9000 firebase
 def gal9000_thread():
     while(1):
         try:
@@ -59,6 +59,7 @@ def gal9000_thread():
         except KeyboardInterrupt:
             return
 
+# poll blind position
 def blind_pos_thread():
     while(1):
         try:
@@ -70,18 +71,12 @@ def blind_pos_thread():
             elif(motor_load == -96.5):
                 blind_state = 'down'
             if (blind_state != ''):
-                set_torque()
-                motor_move(0)
-                set_torque()
                 gal9000.put('blinds','state',blind_state)
                 print blind_state
         except KeyboardInterrupt:
             return
 
-
-# def gal9000_put(state):
-    # gal9000.put('blinds','state',state)
-
+# check and update from firebase
 def gal9000_check():
     blinds_cmd = gal9000.get('blinds','cmd')
     blinds_state = gal9000.get('blinds','state')
@@ -98,49 +93,31 @@ def gal9000_check():
 
     return blinds_state
 
-# motor functions
-# def check_motor_pos():
-#     load = motorCtrl.get_load(1)[0]
-#     if (load == -100):
-#         return 'down'
-#     elif (load == 100):
-#         return 'up'
-#     else:
-#         return 'mid'
-
-def motor_move(speed):
-    motorCtrl.move_wheel(1, speed)
-
+# move blinds 
 def move_blinds(cmd):
     blossom.cmd_blossom(blossom_blinds[cmd])
     blinds_state = ''
     if (cmd == 'raise'):
-        motor_move(-1000)
+        motorCtrl.move_to_limit(1,-1000)
         blinds_state = 'up'
         # gal9000_put('up')
     elif (cmd =='lower'):
-        motor_move(1000)
+        motorCtrl.move_to_limit(1,1000)
         blinds_state = 'down'
         # gal9000_put('down')
     elif (cmd == 'stop'):
-        motor_move(0)
+        motorCtrl.move_to_limit(1,0)
         return
     else:
         return
     gal9000.put('blinds','state',blinds_state)
 
-def set_torque():
-    motorCtrl.motors.set_torque_limit({1:100})
-
 # main
 if __name__ == "__main__":
 
     try:
-        # set function handler
+        # set function handler for http requests
         motorHandler = funHandler
-
-        set_torque()
-        # motorCtrl.motors.set_torque_limit({1:100})
 
         # init blinds state
         # blinds_state = gal9000_check()
@@ -151,8 +128,11 @@ if __name__ == "__main__":
         # c = threading.Thread(target=blind_pos_thread)
         # c.start()
 
+        # start server
         httpd = SocketServer.TCPServer(("", port), motorHandler)
         httpd.serve_forever()
+
+    # catch ctrl-c
     except KeyboardInterrupt:
         httpd.shutdown()
         pass
