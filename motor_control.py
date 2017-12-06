@@ -27,11 +27,13 @@ def move_wheel(motor, speed):
     # motors.set_torque_limit({motor:100})
     # motors.set_moving_speed({motor: speed})
     # motors.enable_torque({motor})
-    motors.set_torque_limit({motor:100})
-    motors.set_moving_speed({motor: speed})
-    time.sleep(0.5)
-    motors.set_torque_limit({motor:100})
-    motors.set_moving_speed({motor: speed})
+    while (motors.get_moving_speed({motor})!=speed):
+        motors.set_torque_limit({motor:100})
+        motors.set_moving_speed({motor: speed})
+        time.sleep(0.1)
+
+    # motors.set_torque_limit({motor:100})
+    # motors.set_moving_speed({motor: speed})
     # t = threading.Thread(target=load_thread,args=(motor))
     # t.start()
     print "Moving motor "+str(motor)+" speed "+str(speed)
