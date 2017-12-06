@@ -30,7 +30,7 @@ def move_wheel(motor, speed):
     while (motors.get_moving_speed({motor})<=speed/10):
         motors.set_torque_limit({motor:100})
         motors.set_moving_speed({motor: speed})
-        time.sleep(0.1)
+        time.sleep(0.5)
 
     # motors.set_torque_limit({motor:100})
     # motors.set_moving_speed({motor: speed})
