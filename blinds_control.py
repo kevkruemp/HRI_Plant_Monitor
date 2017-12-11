@@ -47,6 +47,7 @@ class funHandler(BaseHTTPRequestHandler):
 def gal9000_thread():
     while(1):
         try:
+            print str(GPIO.input(gpio_up))+str(GPIO.input(gpio_down))+str(GPIO.input(gpio_blossom))
             if (GPIO.input(gpio_up)):
                 print 'Raising'
                 move_blinds('raise')
