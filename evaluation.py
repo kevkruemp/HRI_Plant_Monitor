@@ -32,7 +32,7 @@ typing_tests = range(28,36)
 # 2 = A:O, B:X
 # 3 = A:X, B:O
 # 4 = A:O, B:O
-test_cases = [1]
+test_cases = [1, 2, 3, 4]
 test_cond = 0
 
 # random time delays

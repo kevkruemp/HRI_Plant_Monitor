@@ -17,7 +17,7 @@ gpio_up = 4
 # GPIO 3 (pin 5) goes down
 gpio_down = 3
 # GPIO 2 (pin 3) commands blossom
-gpio_blossom = 2
+gpio_blossom = 14
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(gpio_up,GPIO.IN)
 GPIO.setup(gpio_down,GPIO.IN)
