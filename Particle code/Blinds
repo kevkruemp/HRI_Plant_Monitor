@@ -1,0 +1,64 @@
+// Turn on/off pins
+int controlled(String args){
+    int pos = args.indexOf(',');
+    
+    if(-1 == pos){
+        return -1;
+    }
+    
+    String strPin = args.substring(0, pos);
+    String strValue = args.substring(pos + 1);
+
+    int pin = D0;
+    int value = LOW;
+    
+    if(strPin.equalsIgnoreCase("D0")){
+        pin = D0;
+        Particle.publish("D0");
+    }
+    else if(strPin.equalsIgnoreCase("D7")){
+        pin = D7;
+        Particle.publish("D7");
+    }
+    else if(strPin.equalsIgnoreCase("D6")){
+        pin = D6;
+        Particle.publish("D6");
+    }
+    else{
+        return -2;
+    }
+    
+    if(strValue.equalsIgnoreCase("HIGH")){
+        value = HIGH;
+        Particle.publish("on");
+    }
+    else if(strValue.equalsIgnoreCase("LOW")){
+        value = LOW;
+    }
+    else{
+        return -3;
+    }
+    
+    digitalWrite(pin, value);
+    delay(200);
+    digitalWrite(pin,LOW);
+
+    
+    return 1;
+}
+
+
+void setup() {
+    pinMode(D7, OUTPUT);
+    pinMode(D6, OUTPUT);
+    pinMode(D0, OUTPUT);
+
+    
+    // Particle Functions
+    Spark.function("controlled", controlled);
+
+}
+
+void loop() {
+    delay(5000);
+}

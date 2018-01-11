@@ -1,0 +1,85 @@
+// This #include statement was automatically added by the Particle IDE.
+#define DELAY   5000
+
+int pumpPin = D0;
+int sol1 = D1;
+int sol2 = D2;
+int sol3 = D3;
+int sol4 = D4;
+int sol5 = D5;
+int sol6 = D6;
+
+int waterAll(String args){
+    digitalWrite(pumpPin, HIGH);
+    delay(500);
+    digitalWrite(pumpPin, LOW);
+    return 1;
+}
+
+int waterSome(String args){
+    if(args.equalsIgnoreCase("")){
+        return -1;
+    }
+    int pin = D0; // pin for the selected solenoid
+    for (int i=0; i < args.length(); i++){
+       char val = args.charAt(i);
+       switch (val) {
+            case '1':
+                pin = sol1;
+                Particle.publish("PlantWatered","one",60,PRIVATE);
+                break;
+            case '2':
+                pin = sol2;
+                Particle.publish("PlantWatered","two",60,PRIVATE);
+                break;
+            case '3':
+                pin = sol3;
+                Particle.publish("PlantWatered","three",60,PRIVATE);
+                break;
+            case '4':
+                pin = sol4;
+                Particle.publish("PlantWatered","four",60,PRIVATE);
+                break;
+            case '5':
+                pin = sol5;
+                Particle.publish("PlantWatered","five",60,PRIVATE);
+                break;
+            case '6':
+                pin = sol6;
+                Particle.publish("PlantWatered","six",60,PRIVATE);
+                break;
+            default:
+                // if sent anything else
+                Particle.publish("Error","Invalid Plant",60,PRIVATE);
+                return -1;
+       }
+       // water the selected plant for one second
+        digitalWrite(pumpPin, HIGH);
+        digitalWrite(pin, HIGH);
+        delay(1000);
+        digitalWrite(pumpPin, LOW);
+        digitalWrite(pin, LOW);
+        delay(400);
+    }
+    
+    return 1;
+}
+
+void setup() {
+
+    pinMode(pumpPin, OUTPUT);
+    pinMode(sol1, OUTPUT);
+    pinMode(sol2, OUTPUT);
+    pinMode(sol3, OUTPUT);
+    pinMode(sol4, OUTPUT);
+    pinMode(sol5, OUTPUT);
+    pinMode(sol6, OUTPUT);
+    
+    // Particle Functions
+    Spark.function("waterAll", waterAll);
+    Spark.function("waterSome", waterSome);
+}
+
+void loop() {
+    delay(DELAY);
+}
