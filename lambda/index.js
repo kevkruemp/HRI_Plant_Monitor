@@ -26,7 +26,7 @@ Michael Suguitan
 */
 
 // import libraries
-const Keys = require('./keys'); // storage file for particle device keys
+const Keys = require('./keys.js'); // storage file for particle device keys
 const Alexa = require("alexa-sdk");
 var Particle = require('particle-api-js');
 var admin = require('firebase-admin');
@@ -73,7 +73,7 @@ exports.handler = function(event, context, callback){
 var handlers = {
 
 	'launchRequest': function() {
-		var speechOutput = "Welcome to the HRI Smart Lab, please tell me what to do.";
+		var speechOutput = "GAL Nine Thousand is ready.";
     	var repromptText = "What would you like to do?";
     	this.emit(':ask',speechOutput, repromptText);
 	},
@@ -178,6 +178,18 @@ var handlers = {
 			this.emit('unhandled');
 		}
 	},
+
+    'LightsIntent': function() {
+        var intentObj = this.event.request.intent;
+        var lights = intentObj.slots.LIGHTS.value;
+
+        if (typeof lights == 'undefined') {
+            lights = ' ';
+        }
+        this.emit(':tell',"Ok, switching the "+lights+" lights");
+        callParticle(this.event,"hitSwitch",lights,BLINDS_DEVICE_ID,BLINDS_TOKEN)
+    },
+
 	'AMAZON.HelpIntent': function () {
         this.response
             .speak("You can ask me to turn the planter on or off, which will water all of the plants. You can also ask me to water a plant individually.")
@@ -201,10 +213,11 @@ function callParticle(event, func, input, Device_ID, token) {
 	    argument: input,   // input to the called function
 	    auth: token
 	    });
+    console.log(fnPr);
 	fnPr.then(
         function(data) {
             console.log(func + ' successful:', data);
-            }, function(err) {
+    }).catch(function(err) {
                 console.log('An error occurred:', err);
     });
 }
